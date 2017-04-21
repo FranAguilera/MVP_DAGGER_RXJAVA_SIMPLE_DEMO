@@ -136,23 +136,23 @@ Dependency inversion (part of SOLID PRINCIPLES) is a pattern that implements inv
 * Dependency: Object that can be used
 * Injection: Passing of a dependency to a dependant object that will use it.
 
-<b>*"A class should configure its dependencies from the outside"*</b>
-
 More about dependency inversion:
 
 * High level modules should not depend on low level modules. Both should depend on abstractions
 * Abstraction should not depend on details. Details should depend on abstractions.
 
-
-<b>*"Tighly coupling, makes more difficult to modify and to maintain code"*</b>
-
-
-<b>*"You should program towards an interface vs a concrete implementation"*</b>
-
 Benefits of dependency injection:
 
 * Makes unit testing easier
 * Dependency is at Runtime and not at Compile time
+
+
+*"A class should configure its dependencies from the outside"*
+
+*"Tighly coupling makes more difficult to modify and to maintain code"*
+
+*"You should program towards an interface vs a concrete implementation"*
+
 
 #### Dagger 2 Setup
 
@@ -188,14 +188,58 @@ compile 'com.google.dagger:dagger:2.2'
 provided 'javax.annotation:jsr250-api:1.0'
 ```
 
-3) Create classes for Dagger to work:
+3) Create classes/interfaces for Dagger to work:
 
-* <b>ApplicationModule</b>: This is where Dagger will keep track of all dependencies
+* <b>Module Classes (e.g. AplicationModule, EntryPointModule)</b>: This is where Dagger will keep track of all dependencies
 	* Uses @Module anotation
 	* Add modules later on
 	* For the methods, you'll need to add:
 		* @Provides
 		* @Singleton -> Tells Dagger compiler that the instance should be created only once. (Tells )
+		
+
+```		
+import android.app.Application;
+import android.content.Context;
+
+import javax.inject.Singleton;
+
+import dagger.Module;
+import dagger.Provides;
+
+@Module
+public class ApplicationModule {
+    private Application application;
+
+    public ApplicationModule(Application application){
+        this.application = application;
+    }
+
+    @Provides
+    @Singleton
+    public Context provideContext(){
+        return application;
+    }
+}
+```
+
+```	
+import dagger.Module;
+import dagger.Provides;
+import franjam.mvpdemo.mvp.presenter.EntryPointPresenterImplementation;
+
+@Module
+public class EntryPointModule {
+
+    @Provides
+    public EntryPointPresenterImplementation provideMainEntryPresenter(){
+        return new EntryPointPresenterImplementation();
+    }
+
+    // Here to provide more modules (e.g. presenters, services, etc) to be injected
+}
+
+```	
 	
 * <b>ApplicationComponent</b>: This is used by Dagger to know where to inject the dependencies
 	* In Dagger 2 the injector class is called <b>component</b>
@@ -204,12 +248,69 @@ provided 'javax.annotation:jsr250-api:1.0'
 		* @Singleton
 		* @Component(modules = ApplicationModule.class)
 		* All classes should be added with the inject method
+
+```
+import javax.inject.Singleton;
+
+import dagger.Component;
+import franjam.mvpdemo.activities.EntryPointActivity;
+
+@Singleton
+@Component(modules = {ApplicationModule.class, EntryPointModule.class})
+public interface ApplicationComponent {
+    // This is where the presenter will be injected
+    void inject(EntryPointActivity target);
+}
+```
+
 * <b>App</b>: App class will extends from Application and it's where dagger will live on the entire lifetime of the app.
 	* Extends from Application
 	* onCreate must be override to define component
 	* Add method getApplicicationComponent
 	* <b>"WARNING: You will have to click on "make run" to generate the dagger component for the first time"</b>
 	
+```
+import android.app.Application;
+
+public class App extends Application {
+
+    private ApplicationComponent component;
+
+    @Override
+    public void onCreate(){
+        super.onCreate();
+
+        // NOTE: DaggerApplicationComponent will be generated automatically after 'make project'
+
+        component = DaggerApplicationComponent.builder()
+                .applicationModule(new ApplicationModule(this))
+                .entryPointModule(new EntryPointModule())
+                .build();
+
+    }
+
+    public ApplicationComponent getComponent(){
+        return component;
+    }
+}
+
+```
+	
 4) Define injection on your desired class:
 
-	* (App)getApplication).getComponent(this)
+```
+public class EntryPointActivity extends AppCompatActivity implements EntryPointView, GiphyAdapter.GiphyListener {
+    @Inject
+    EntryPointPresenterImplementation presenter;
+    private RecyclerView recyclerView;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        setContentView(R.layout.main_entry_point_activity);
+		
+		// Here add your component
+		(App)getApplication).getComponent(this)
+    }
+}
+```
