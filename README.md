@@ -5,11 +5,11 @@
 *Image from Thom Holwerda. License Attribution-NoDerivs 2.0 Generic (CC BY-ND 2.0). 
 [Image Link url](https://www.flickr.com/photos/smitty/2245445147)*
 
-# MVP + DAGGER 2 + RXJAVA 2 (SIMPLE EXAMPLE)
+# MVP + DAGGER 2 + RXJAVA (SIMPLE EXAMPLE)
 
 The purpose of this repository is to create an straightforward introduction of the MVP pattern in Android development.
 
-In addition to MVP clean architecture, dependency injection framework (Dagger 2) and Reactive Programming (RxJava 2) will be sampled within this simple app.
+In addition to MVP clean architecture, dependency injection framework (Dagger 2) and Reactive Programming (RxJava) will be sampled within this simple app.
 
 ## APP DEMO
 
@@ -316,7 +316,7 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
 
 
 
-## RxJAVA 2
+## RxJava
 
 #### Concepts
 
