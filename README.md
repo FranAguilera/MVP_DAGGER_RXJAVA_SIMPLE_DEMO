@@ -157,7 +157,7 @@ Benefits of dependency injection:
 
 1) Open build.gradle from project and add classpath dependencies (com.neenbedankt.gradle.plugins:android-apt:1.8)
 
-```
+```groovy
 buildscript {
     repositories {
         jcenter()
@@ -174,7 +174,7 @@ buildscript {
 
 2) Add dependencies to the build.gradle at module app.
 
-```
+```groovy
 // TOP of the file
 apply plugin: 'com.android.application'
 
@@ -197,7 +197,7 @@ provided 'javax.annotation:jsr250-api:1.0'
 		* @Singleton -> Tells Dagger compiler that the instance should be created only once. (Tells )
 		
 
-```		
+```java	
 import android.app.Application;
 import android.content.Context;
 
@@ -222,7 +222,7 @@ public class ApplicationModule {
 }
 ```
 
-```	
+```java
 import dagger.Module;
 import dagger.Provides;
 import franjam.mvpdemo.mvp.presenter.EntryPointPresenterImplementation;
@@ -248,7 +248,7 @@ public class EntryPointModule {
 		* @Component(modules = ApplicationModule.class)
 		* All classes should be added with the inject method
 
-```
+```java
 import javax.inject.Singleton;
 
 import dagger.Component;
@@ -268,7 +268,7 @@ public interface ApplicationComponent {
 	* Add method getApplicicationComponent
 	* <b>"WARNING: You will have to click on "make run" to generate the dagger component for the first time"</b>
 	
-```
+```java
 import android.app.Application;
 
 public class App extends Application {
@@ -297,7 +297,7 @@ public class App extends Application {
 	
 4) Define injection on your desired class:
 
-```
+```java
 public class EntryPointActivity extends AppCompatActivity implements EntryPointView, GiphyAdapter.GiphyListener {
     @Inject
     EntryPointPresenterImplementation presenter;
@@ -361,7 +361,7 @@ For each Subscriber it has, an Observable calls Subscriber.onNext() any number o
 
 1) Add dependencies into build.gradle app:
 
-```
+```groovy
 // RxJava
 compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
 compile 'com.squareup.retrofit2:converter-gson:2.1.0'
@@ -371,7 +371,7 @@ compile 'io.reactivex:rxjava:1.1.6'
 ```
 2) Make sure your retrofit contract return an Observable
 
-```
+```java
 import franjam.mvpdemo.mvp.model.GiphyData;
 import retrofit2.http.GET;
 import retrofit2.http.Query;
@@ -388,7 +388,7 @@ public interface GiphyContract {
 
 3) On your custom Request return a Rx Subscription:
 
-```
+```java
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
@@ -465,7 +465,7 @@ import rx.subscriptions.CompositeSubscription;);
 * When presenter is no longer available call compositeRxSubscription.unsubscribe();
 
 
-```
+```java
 import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
