@@ -326,7 +326,7 @@ Is a library for composing asynchronous and event-based programs by using observ
 
 With reactive programming, we receive a continuous flow of data (a stream) and we provide the operations to apply to the stream.
 
-####Main benefits of RxJava in Android
+#### Main benefits of RxJava in Android
 
 * Simplifies the ability to chain asynchronous operations
 * Exposes a more explicit way for declaring how concurrent operations should operate
@@ -334,7 +334,7 @@ With reactive programming, we receive a continuous flow of data (a stream) and w
 * Helps reduce the need for state variables that can introduce bugs
 
 
-####Main Building Blocks
+#### Main Building Blocks
 
 The basic building blocks of reactive code are Observables and Subscribers:
 
@@ -347,7 +347,7 @@ For each Subscriber it has, an Observable calls Subscriber.onNext() any number o
 
 *"It looks A LOT like the standard observer pattern but it differs in one key way - Observables often don’t start emitting items until someone explicitly subscribes to them"*
 
-####Implementation
+#### Implementation
 
 * Observable : 
 	* Emits items.
@@ -385,7 +385,7 @@ public interface GiphyContract {
 }
 ```
 
-3) On your request return a rx Service:
+3) On your custom Request return a Rx Subscription:
 
 ```
 import retrofit2.Retrofit;
