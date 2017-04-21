@@ -126,7 +126,6 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
 ```
 
 ## DAGGER 2
-<br>
 It's a dependency injection framework, you can find more info [here](https://github.com/google/dagger)
 
 #### Dependency Inversion
@@ -314,3 +313,183 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
     }
 }
 ```
+
+
+
+## RxJAVA 2
+
+#### Concepts
+
+Rx stands for Reactive Extensions (Is a port of the Reactive Extensions library from .NET).
+Is a library for composing asynchronous and event-based programs by using observable sequences
+
+
+With reactive programming, we receive a continuous flow of data (a stream) and we provide the operations to apply to the stream.
+
+####Main benefits of RxJava in Android
+
+* Simplifies the ability to chain asynchronous operations
+* Exposes a more explicit way for declaring how concurrent operations should operate
+* Surfaces errors sooner
+* Helps reduce the need for state variables that can introduce bugs
+
+
+####Main Building Blocks
+
+The basic building blocks of reactive code are Observables and Subscribers:
+
+* Observable: Emits items.
+* Subscriber: Consumes those Items.
+
+There is a pattern on how items are emitted. An observable may emit any number of items (including zero items) then is terminated either by successfully completing, or due to an error
+
+For each Subscriber it has, an Observable calls Subscriber.onNext() any number of times, followed by either Subscriber.onCompleted() or Subscriber.onError()
+
+*"It looks A LOT like the standard observer pattern but it differs in one key way - Observables often don’t start emitting items until someone explicitly subscribes to them"*
+
+####Implementation
+
+* Observable : 
+	* Emits items.
+	* It may emit any number of items including zero items then it terminates either by successfully completing or by an error.
+	* It can have any number of observers attached to it.
+	* When an item is emitted the observable calls onNext method on each Observer (Subscriber) which is attached to it.
+
+* Observers (Subscribers) : Consume those items. 
+
+#### Example Setup
+
+1) Add dependencies into build.gradle app:
+
+    // RxJava
+    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
+    compile 'io.reactivex:rxandroid:1.2.1'
+    compile 'io.reactivex:rxjava:1.1.6'
+    
+2) Make sure your retrofit contract return an Observable
+
+```
+import franjam.mvpdemo.mvp.model.GiphyData;
+import retrofit2.http.GET;
+import retrofit2.http.Query;
+import rx.Observable;
+
+public interface GiphyContract {
+    String PUBLIC_BETA_KEY = "dc6zaTOxFJmzC";
+    String targetUrl = "v1/gifs/search?api_key=" + PUBLIC_BETA_KEY;
+
+    @GET(targetUrl)
+    Observable<GiphyData> getGiphy(@Query("q")String query);
+}
+```
+
+3) On your request return a rx Service:
+
+```
+import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
+import retrofit2.converter.gson.GsonConverterFactory;
+import retrofit2.converter.scalars.ScalarsConverterFactory;
+import rx.Observable;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.android.schedulers.AndroidSchedulers;
+import rx.functions.Func1;
+import rx.schedulers.Schedulers;
+
+public class GiphyRequest {
+    private static final String BASE_URL = "http://api.giphy.com";
+    private final GiphyContract contract;
+    private final PicsCallback picsCallback;
+
+    public GiphyRequest(PicsCallback picsCallback) {
+        Retrofit retrofit = new Retrofit.Builder()
+                .baseUrl(BASE_URL)
+                .addConverterFactory(GsonConverterFactory.create())
+                .addConverterFactory(ScalarsConverterFactory.create())
+                .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+                .build();
+
+        this.contract = retrofit.create(GiphyContract.class);
+        this.picsCallback = picsCallback;
+    }
+	
+	// Check subscription here
+    public Subscription getPics(final String queryText) {
+
+        return contract.getGiphy(queryText)
+                .subscribeOn(Schedulers.io())
+                .observeOn(AndroidSchedulers.mainThread())
+                .onErrorResumeNext(new Func1<Throwable, Observable<? extends GiphyData>>() {
+                    @Override
+                    public Observable<? extends GiphyData> call(Throwable throwable) {
+                        return Observable.error(throwable);
+                    }
+                })
+                .subscribe(new Subscriber<GiphyData>() {
+                    @Override
+                    public void onCompleted() {
+                        picsCallback.onFinished();
+                    }
+
+                    @Override
+                    public void onError(Throwable e) {
+                        picsCallback.onError(e);
+                    }
+
+                    @Override
+                    public void onNext(GiphyData flickrData) {
+                        picsCallback.onSuccess(flickrData);
+                    }
+                });
+    }
+
+    public interface PicsCallback {
+        void onSuccess(GiphyData flickrData);
+        void onError(Throwable networkError);
+        void onFinished();
+    }
+}
+```
+
+4) On your presenter:
+
+* Define an CompositeSubscription instance class field (
+import rx.subscriptions.CompositeSubscription;);
+
+* Add your Rx service to the compositeRxSubscription.add when presenter is initialized
+
+* When presenter is no longer available call compositeRxSubscription.unsubscribe();
+
+
+```
+import rx.Subscription;
+import rx.subscriptions.CompositeSubscription;
+
+public class EntryPointPresenterImplementation implements EntryPointPresenter {
+  	....
+    private CompositeSubscription compositeRxSubscription;
+
+    ...
+    @Override
+    public void initialize() {
+        ...
+        
+        GiphyCallback giphyCallback = new GiphyCallback(this);
+        GiphyRequest request = new GiphyRequest(giphyCallback);
+
+        this.compositeRxSubscription = new CompositeSubscription();
+        Subscription rxSubscription = request.getPics(QUERY_TEXT);
+        compositeRxSubscription.add(rxSubscription);
+    }
+
+    @Override
+    public void onStop() {
+        compositeRxSubscription.unsubscribe();
+    }
+}
+
+```
+

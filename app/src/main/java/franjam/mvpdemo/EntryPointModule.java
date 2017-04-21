@@ -11,6 +11,4 @@ public class EntryPointModule {
     public EntryPointPresenterImplementation provideMainEntryPresenter(){
         return new EntryPointPresenterImplementation();
     }
-
-    // Here to provide more modules (e.g. presenters, services, etc) to be injected
 }

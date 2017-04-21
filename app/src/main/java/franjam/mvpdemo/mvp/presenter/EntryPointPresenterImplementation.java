@@ -32,8 +32,8 @@ public class EntryPointPresenterImplementation implements EntryPointPresenter {
         GiphyRequest request = new GiphyRequest(giphyCallback);
 
         this.compositeRxSubscription = new CompositeSubscription();
-        Subscription rxService = request.getPics(QUERY_TEXT);
-        compositeRxSubscription.add(rxService);
+        Subscription rxSubscription = request.getPics(QUERY_TEXT);
+        compositeRxSubscription.add(rxSubscription);
     }
 
     @Override
