@@ -361,13 +361,14 @@ For each Subscriber it has, an Observable calls Subscriber.onNext() any number o
 
 1) Add dependencies into build.gradle app:
 
-    // RxJava
-    compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
-    compile 'com.squareup.retrofit2:converter-gson:2.1.0'
-    compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
-    compile 'io.reactivex:rxandroid:1.2.1'
-    compile 'io.reactivex:rxjava:1.1.6'
-    
+```
+// RxJava
+compile 'com.squareup.retrofit2:adapter-rxjava:2.1.0'
+compile 'com.squareup.retrofit2:converter-gson:2.1.0'
+compile 'com.squareup.retrofit2:converter-scalars:2.1.0'
+compile 'io.reactivex:rxandroid:1.2.1'
+compile 'io.reactivex:rxjava:1.1.6' 
+```
 2) Make sure your retrofit contract return an Observable
 
 ```
