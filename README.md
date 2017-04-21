@@ -125,3 +125,91 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
 }
 ```
 
+## DAGGER 2
+<br>
+It's a dependency injection framework, you can find more info [here](https://github.com/google/dagger)
+
+#### Dependency Inversion
+
+Dependency inversion (part of SOLID PRINCIPLES) is a pattern that implements inversion of control for resolving dependencies:
+
+* Dependency: Object that can be used
+* Injection: Passing of a dependency to a dependant object that will use it.
+
+<b>*"A class should configure its dependencies from the outside"*</b>
+
+More about dependency inversion:
+
+* High level modules should not depend on low level modules. Both should depend on abstractions
+* Abstraction should not depend on details. Details should depend on abstractions.
+
+
+<b>*"Tighly coupling, makes more difficult to modify and to maintain code"*</b>
+
+
+<b>*"You should program towards an interface vs a concrete implementation"*</b>
+
+Benefits of dependency injection:
+
+* Makes unit testing easier
+* Dependency is at Runtime and not at Compile time
+
+#### Dagger 2 Setup
+
+1) Open build.gradle from project and add classpath dependencies (com.neenbedankt.gradle.plugins:android-apt:1.8)
+
+```
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.android.tools.build:gradle:2.2.0'
+        
+        // HERE: ADD THIS LINE BELOW
+        classpath 'com.neenbedankt.gradle.plugins:android-apt:1.8'
+    }
+}
+
+```
+
+2) Add dependencies to the build.gradle at module app.
+
+```
+// TOP of the file
+apply plugin: 'com.android.application'
+
+// HERE: ADD THIS LINE BELOW
+apply plugin: 'com.neenbedankt.android-apt'
+
+// Add this at the BOTTOM of the file
+apt 'com.google.dagger:dagger-compiler:2.2'
+compile 'com.google.dagger:dagger:2.2'
+provided 'javax.annotation:jsr250-api:1.0'
+```
+
+3) Create classes for Dagger to work:
+
+* <b>ApplicationModule</b>: This is where Dagger will keep track of all dependencies
+	* Uses @Module anotation
+	* Add modules later on
+	* For the methods, you'll need to add:
+		* @Provides
+		* @Singleton -> Tells Dagger compiler that the instance should be created only once. (Tells )
+	
+* <b>ApplicationComponent</b>: This is used by Dagger to know where to inject the dependencies
+	* In Dagger 2 the injector class is called <b>component</b>
+	* This component assigns references in our activities, services, fragments,etc.
+	* You'll need to specify the component via:
+		* @Singleton
+		* @Component(modules = ApplicationModule.class)
+		* All classes should be added with the inject method
+* <b>App</b>: App class will extends from Application and it's where dagger will live on the entire lifetime of the app.
+	* Extends from Application
+	* onCreate must be override to define component
+	* Add method getApplicicationComponent
+	* <b>"WARNING: You will have to click on "make run" to generate the dagger component for the first time"</b>
+	
+4) Define injection on your desired class:
+
+	* (App)getApplication).getComponent(this)
