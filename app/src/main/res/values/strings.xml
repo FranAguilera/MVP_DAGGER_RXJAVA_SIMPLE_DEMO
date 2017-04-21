@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">MVP + DAGGER 2 + RxJAVA 2</string>
+    <string name="title_activity_main">MainActivity</string>
+    <string name="request_finished_message">Network request finished!</string>
+</resources>
