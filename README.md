@@ -11,14 +11,6 @@ The purpose of this repository is to create an straightforward introduction of t
 
 In addition to MVP clean architecture, dependency injection framework (Dagger 2) and Reactive Programming (RxJava) will be sampled within this simple app.
 
-## APP DEMO
-
-<br>
-<p align="center">
-<img align="center" src="app_demo.gif" width="50%" alt=""/>
-</p>
-
-<br>
 
 ## MVP
 MVP is a clean architecture design pattern that stands for Model-View-Presenter. The main benefits are that it allows you to decouple logic from Activities/Fragments and make the app more testable, easier to maintain, more readable, etc. These are the main components:
