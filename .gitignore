@@ -9,3 +9,5 @@
 .externalNativeBuild
 libs/
 src/androidTest/
+
+.idea/vcs.xml
