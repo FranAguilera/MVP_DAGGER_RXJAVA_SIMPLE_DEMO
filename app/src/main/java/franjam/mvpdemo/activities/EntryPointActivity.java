@@ -2,7 +2,7 @@ package franjam.mvpdemo.activities;
 
 import android.os.Bundle;
 import android.support.v7.app.AppCompatActivity;
-import android.support.v7.widget.GridLayoutManager;
+import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.widget.Toast;
 
@@ -19,6 +19,7 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
     @Inject
     EntryPointPresenterImplementation presenter;
     private RecyclerView recyclerView;
+    private GiphyAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,8 +29,10 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
         injectView();
 
         recyclerView = (RecyclerView) findViewById(R.id.main_recycler_view);
-        GridLayoutManager layoutManager = new GridLayoutManager(this, 1);
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this);
         recyclerView.setLayoutManager(layoutManager);
+        adapter = new GiphyAdapter(getBaseContext(), this);
+        recyclerView.setAdapter(adapter);
     }
 
     @Override
@@ -46,8 +49,8 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
     }
 
     @Override
-    public void updateRecyclerView(GiphyData giphyData) {
-        GiphyAdapter adapter = new GiphyAdapter(this, giphyData, this);
+    public void updateRecyclerViewData(GiphyData giphyData) {
+        adapter.updateGiphyData(giphyData);
         recyclerView.setAdapter(adapter);
     }
 
@@ -67,7 +70,7 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
 
     /**
      * Dagger 2 injection.
-     *
+     * <p>
      * Injects EntryPointActivity into ApplicationComponent
      */
     private void injectView() {

@@ -17,15 +17,18 @@ public class GiphyAdapter extends RecyclerView.Adapter<GiphyAdapter.GiphyViewHol
     private GiphyListener listener;
     private Context context;
 
-    public GiphyAdapter(Context context, GiphyData data, GiphyListener listener) {
-        this.giphyData = data;
+    public GiphyAdapter(Context context, GiphyListener listener) {
+        this.giphyData = new GiphyData();
         this.listener = listener;
         this.context = context;
     }
 
     @Override
     public GiphyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item, parent, false);
+        View view = LayoutInflater.
+                from(parent.getContext()).
+                inflate(R.layout.recycler_view_item, parent, false);
+
         return new GiphyViewHolder(view);
     }
 
@@ -36,7 +39,11 @@ public class GiphyAdapter extends RecyclerView.Adapter<GiphyAdapter.GiphyViewHol
 
     @Override
     public int getItemCount() {
-        return giphyData.getData().size();
+        return giphyData.getSize();
+    }
+
+    public void updateGiphyData(GiphyData giphyData) {
+        this.giphyData = giphyData;
     }
 
     public interface GiphyListener {
