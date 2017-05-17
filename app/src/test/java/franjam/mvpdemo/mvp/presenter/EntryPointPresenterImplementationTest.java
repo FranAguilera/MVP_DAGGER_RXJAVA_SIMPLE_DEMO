@@ -10,7 +10,9 @@ import franjam.mvpdemo.mvp.model.GiphyData;
 import franjam.mvpdemo.mvp.view.EntryPointView;
 
 import static org.mockito.Matchers.anyString;
+import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -30,10 +32,32 @@ public class EntryPointPresenterImplementationTest {
     }
 
     @Test
+    public void initialize() throws Exception {
+        EntryPointPresenterImplementation entryPointPresenter = spy(presenter);
+        doNothing().when(entryPointPresenter).intializeSubscriptionRequest();
+        doNothing().when(entryPointPresenter).executeGiphyRequest();
+
+        entryPointPresenter.initialize();
+
+        verify(entryPointPresenter).intializeSubscriptionRequest();
+        verify(entryPointPresenter).executeGiphyRequest();
+    }
+
+    @Test
+    public void stop() throws Exception {
+        EntryPointPresenterImplementation entryPointPresenter = spy(presenter);
+        doNothing().when(entryPointPresenter).unSubscribeRequest();
+
+        entryPointPresenter.onStop();
+
+        verify(entryPointPresenter).unSubscribeRequest();
+    }
+
+    @Test
     public void successResponse() {
-        GiphyData flickrData = mock(GiphyData.class);
-        callback.onSuccess(flickrData);
-        verify(mockView).updateRecyclerView(flickrData);
+        GiphyData mockData = mock(GiphyData.class);
+        callback.onSuccess(mockData);
+        verify(mockView).updateRecyclerViewData(mockData);
     }
 
     @Test
@@ -46,7 +70,6 @@ public class EntryPointPresenterImplementationTest {
         callback.onError(mockThrowable);
         verify(mockView).displayMessage(errorMessage);
     }
-
 
     @Test
     public void finishedResponse() {

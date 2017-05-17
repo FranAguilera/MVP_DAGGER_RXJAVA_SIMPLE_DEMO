@@ -17,6 +17,11 @@ public class GiphyData {
         return data;
     }
 
+    public int getSize() {
+        if (data == null) return 0;
+        else return data.size();
+    }
+
     public String getUrl(int position) {
         String url = "";
         if (data != null && data.size() > position) {

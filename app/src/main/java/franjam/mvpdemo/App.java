@@ -11,6 +11,14 @@ public class App extends Application {
     public void onCreate(){
         super.onCreate();
 
+        setDaggerAppComponent();
+    }
+
+    public ApplicationComponent getComponent(){
+        return component;
+    }
+
+    private void setDaggerAppComponent(){
         // NOTE: DaggerApplicationComponent will be generated automatically after 'make project'
 
         //noinspection deprecation
@@ -18,10 +26,5 @@ public class App extends Application {
                 .applicationModule(new ApplicationModule(this))
                 .entryPointModule(new EntryPointModule())
                 .build();
-
-    }
-
-    public ApplicationComponent getComponent(){
-        return component;
     }
 }

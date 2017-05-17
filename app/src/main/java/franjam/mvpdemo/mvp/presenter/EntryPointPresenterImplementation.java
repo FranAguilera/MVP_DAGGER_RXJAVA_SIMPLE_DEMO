@@ -11,12 +11,13 @@ import rx.Subscription;
 import rx.subscriptions.CompositeSubscription;
 
 public class EntryPointPresenterImplementation implements EntryPointPresenter {
-    private static final String QUERY_TEXT = "barcelona";
-    private static final String INITIAL_TEXT = "Presenter initialized!";
+    private static final String QUERY_TEXT = "cats";
     private static final String END_REQUEST_TEXT = "Request finished";
 
     private EntryPointView view;
     private CompositeSubscription compositeRxSubscription;
+    private GiphyCallback giphyCallback;
+    private GiphyRequest request;
 
     @Override
     public void setView(EntryPointView view) {
@@ -25,19 +26,30 @@ public class EntryPointPresenterImplementation implements EntryPointPresenter {
 
     @Override
     public void initialize() {
-        // TODO: INITIAL_TEXT could be localized in strings.xml
-        view.displayMessage(INITIAL_TEXT);
-
-        GiphyCallback giphyCallback = new GiphyCallback(this);
-        GiphyRequest request = new GiphyRequest(giphyCallback);
-
-        this.compositeRxSubscription = new CompositeSubscription();
-        Subscription rxSubscription = request.getPics(QUERY_TEXT);
-        compositeRxSubscription.add(rxSubscription);
+        intializeSubscriptionRequest();
+        executeGiphyRequest();
     }
 
     @Override
     public void onStop() {
+        unSubscribeRequest();
+    }
+
+    @VisibleForTesting
+    void intializeSubscriptionRequest() {
+        giphyCallback = new GiphyCallback(this);
+        request = new GiphyRequest(giphyCallback);
+        this.compositeRxSubscription = new CompositeSubscription();
+    }
+
+    @VisibleForTesting
+    void executeGiphyRequest() {
+        Subscription rxSubscription = request.getPics(QUERY_TEXT);
+        compositeRxSubscription.add(rxSubscription);
+    }
+
+    @VisibleForTesting
+    void unSubscribeRequest() {
         compositeRxSubscription.unsubscribe();
     }
 
@@ -51,23 +63,23 @@ public class EntryPointPresenterImplementation implements EntryPointPresenter {
 
         @Override
         public void onSuccess(GiphyData giphyData) {
-            if (isValidReference()){
-                weakRef.get().view.updateRecyclerView(giphyData);
-            }
+            if (!isValidReference()) return;
+
+            weakRef.get().view.updateRecyclerViewData(giphyData);
         }
 
         @Override
         public void onError(Throwable networkError) {
-            if (isValidReference()) {
-                weakRef.get().view.displayMessage(networkError.getMessage());
-            }
+            if (!isValidReference()) return;
+
+            weakRef.get().view.displayMessage(networkError.getMessage());
         }
 
         @Override
         public void onFinished() {
-            if (isValidReference()) {
-                weakRef.get().view.displayMessage(END_REQUEST_TEXT);
-            }
+            if (!isValidReference()) return;
+
+            weakRef.get().view.displayMessage(END_REQUEST_TEXT);
         }
 
         private boolean isValidReference() {
