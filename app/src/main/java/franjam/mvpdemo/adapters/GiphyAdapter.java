@@ -44,6 +44,7 @@ public class GiphyAdapter extends RecyclerView.Adapter<GiphyAdapter.GiphyViewHol
 
     public void updateGiphyData(GiphyData giphyData) {
         this.giphyData = giphyData;
+        notifyDataSetChanged();
     }
 
     public interface GiphyListener {

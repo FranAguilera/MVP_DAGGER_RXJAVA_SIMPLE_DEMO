@@ -51,7 +51,6 @@ public class EntryPointActivity extends AppCompatActivity implements EntryPointV
     @Override
     public void updateRecyclerViewData(GiphyData giphyData) {
         adapter.updateGiphyData(giphyData);
-        recyclerView.setAdapter(adapter);
     }
 
     @Override
