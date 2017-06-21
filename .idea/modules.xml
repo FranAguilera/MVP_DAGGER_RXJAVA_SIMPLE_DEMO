@@ -2,6 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
+      <module fileurl="file://$PROJECT_DIR$/MVP_DAGGER_RXJAVA_SIMPLE_DEMO.iml" filepath="$PROJECT_DIR$/MVP_DAGGER_RXJAVA_SIMPLE_DEMO.iml" />
       <module fileurl="file://$PROJECT_DIR$/MvpDaggerRxJavaDemo.iml" filepath="$PROJECT_DIR$/MvpDaggerRxJavaDemo.iml" />
       <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
     </modules>
