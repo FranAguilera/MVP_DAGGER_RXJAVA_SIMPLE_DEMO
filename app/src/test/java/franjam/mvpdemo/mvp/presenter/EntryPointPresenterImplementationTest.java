@@ -13,6 +13,7 @@ import static org.mockito.Matchers.anyString;
 import static org.mockito.Mockito.doNothing;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
@@ -39,7 +40,7 @@ public class EntryPointPresenterImplementationTest {
 
         entryPointPresenter.initialize();
 
-        verify(entryPointPresenter).intializeSubscriptionRequest();
+        verify(entryPointPresenter, times(3)).intializeSubscriptionRequest();
         verify(entryPointPresenter).executeGiphyRequest();
     }
 
