@@ -25,10 +25,7 @@ public class GiphyAdapter extends RecyclerView.Adapter<GiphyAdapter.GiphyViewHol
 
     @Override
     public GiphyViewHolder onCreateViewHolder(ViewGroup parent, int viewType) {
-        View view = LayoutInflater.
-                from(parent.getContext()).
-                inflate(R.layout.recycler_view_item, parent, false);
-
+        View view = LayoutInflater.from(parent.getContext()).inflate(R.layout.recycler_view_item, parent, false);
         return new GiphyViewHolder(view);
     }
 
